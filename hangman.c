@@ -20,8 +20,6 @@ int winGame(char *ptrSolution, char *currentBoard);
 
 int main(void){
    
-   /*array of char pointers*/
-   //char *guessWords[] = {}
    char guessWords[6][16] = {"knight", "hornet", "defender", "dimitri", "edelgard", "claude"};
    char ptrSolution[10];
    int tries;
@@ -34,9 +32,8 @@ int main(void){
    getWord(guessWords, randWord(), ptrSolution);   
    print(ptrSolution);
    initBoard(ptrSolution, &boardSize, currentBoard);
-
-   while( !(winGame(ptrSolution, currentBoard) == 0) || (tries > 0) ){ // or won game in less or equal tries to tries
-      
+   
+   while( ((winGame(ptrSolution, currentBoard) == 0)) && (tries > 0)){ // or won game in less or equal tries to tries 
       printf("%s", "Guess a letter: ");
       userGuess = getchar();
       getchar();
@@ -45,16 +42,13 @@ int main(void){
       if(isInWord(userGuess, ptrSolution) == 0){
          tries--;
          printBoard(currentBoard, boardSize);
-         //printf("%s, %c", "printing user guess in if: ", userGuess);
       }
       else{
-      //update board
-      //printf("%c",userGuess);
       updateBoard(ptrSolution, &userGuess, currentBoard);
       printBoard(currentBoard, boardSize);
-      
-      //check if won game
-      
+      int aux;
+      aux = winGame(ptrSolution, currentBoard);
+      printf("%s%d", "number is: ", aux);
       }
    }   
    return 0;
@@ -125,20 +119,19 @@ void printBoard(char *currentBoard, int boardSize){
 int winGame(char *ptrSolution, char *currentBoard){
    int solutionSize;
    int counter;
+   int i;
+   i = 0;
    solutionSize = 0;
    counter = 0;
-   while(*(ptrSolution++) != '\n'){
+
+   while(ptrSolution[i] != '\0'){
       solutionSize++;
-//      currentBoard++;
-      if(*ptrSolution == *currentBoard){
+      if(ptrSolution[i] == currentBoard[i]){
          counter++;
       }
-      currentBoard++;
+      i++;
    }
-   if(solutionSize == counter){
-      return solutionSize;
-   }
-   else{
-      return 0;
-   }
+   printf("%s%d", "size of the solution: ", solutionSize);
+   printf("%s%d", "counter value: ", counter);
+   return (solutionSize == counter) ? solutionSize : 0;
 }
