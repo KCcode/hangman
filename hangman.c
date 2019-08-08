@@ -1,8 +1,9 @@
-/*simple hangman maximum of 10 tries before the person loses
- * start with input from an array with fixed size words <= 8 chars each
- * will change this to pointers to vary word size
- *store: in an array of strings
- * */
+/*Simple hangman used to practice C
+ * maximum amount of trys is 10
+ * predefined words in a list
+ * could be expanded in the future 
+ * to practice dynamic allocation
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +12,7 @@
 
 int randWord();
 void getWord(char listWords[6][16], int word, char *ptrSolution);
-void print(char *ptrSolution);
+void print(char *ptrSolution); //used to debug
 int isInWord(char userGuess, char *ptrSolution);
 void initBoard(char *ptrSolution, int *boardSize, char *currentBoard);
 void updateBoard(char *ptrSolution, char *userGuess, char *currentBoard);
@@ -21,36 +22,35 @@ int winGame(char *ptrSolution, char *currentBoard);
 int main(void){
    
    char guessWords[6][16] = {"knight", "hornet", "defender", "dimitri", "edelgard", "claude"};
-   char ptrSolution[10];
-   int tries;
-   tries = 10;
+   char ptrSolution[10], currentBoard[10];
    char userGuess;
-   char currentBoard[10];
-   int boardSize;
+   int trys, boardSize;
+   trys = 10;
    boardSize = 0;
-   
+
    getWord(guessWords, randWord(), ptrSolution);   
-   print(ptrSolution);
+   print(ptrSolution); //used to debug
    initBoard(ptrSolution, &boardSize, currentBoard);
-   
-   while( ((winGame(ptrSolution, currentBoard) == 0)) && (tries > 0)){ // or won game in less or equal tries to tries 
+
+   //If havent won the game in equal or less than 10 trys
+   while( ((winGame(ptrSolution, currentBoard) == 0)) && (trys > 0)){
       printf("%s", "Guess a letter: ");
       userGuess = getchar();
-      getchar();
-      printf("%c", userGuess);
-           
+      while(getchar() != '\n');//flush the buffer to read just one char
+      printf("%c", '\n');     
       if(isInWord(userGuess, ptrSolution) == 0){
-         tries--;
+         trys--;
          printBoard(currentBoard, boardSize);
+         printf("%s\n", "Incorrect guess");
       }
       else{
-      updateBoard(ptrSolution, &userGuess, currentBoard);
-      printBoard(currentBoard, boardSize);
-      int aux;
-      aux = winGame(ptrSolution, currentBoard);
-      printf("%s%d", "number is: ", aux);
+         updateBoard(ptrSolution, &userGuess, currentBoard);
+         printBoard(currentBoard, boardSize);
+         printf("%s\n", "Correct guess");
       }
-   }   
+   }
+
+   (trys > 0) ? printf("%s\n", "You won!") : printf("%s\n", "You lost :(");
    return 0;
 }
 
@@ -68,6 +68,7 @@ void getWord(char listWords[6][16], int word, char *ptrSolution){
    }
 }
 
+// used to debug
 void print(char *ptrSolution){
    int i;
    for(i = 0; i < 10; i++){
@@ -77,7 +78,7 @@ void print(char *ptrSolution){
 }
 
 //get the user's char and compare to each letter in the solution
-//if 0 not it word if 1 then it is in the word
+//if 0 not in word if 1 then it is in the word
 int isInWord(char userGuess, char *ptrSolution){
    int i, count;
    count = 0;
@@ -113,16 +114,14 @@ void printBoard(char *currentBoard, int boardSize){
    for(i = 0; i < boardSize; i++){
       printf("%c ", currentBoard[i]);
    }
+   printf("%c", '\n');
 }
 
-
 int winGame(char *ptrSolution, char *currentBoard){
-   int solutionSize;
-   int counter;
-   int i;
-   i = 0;
+   int solutionSize, counter, i;
    solutionSize = 0;
    counter = 0;
+   i = 0;
 
    while(ptrSolution[i] != '\0'){
       solutionSize++;
@@ -131,7 +130,5 @@ int winGame(char *ptrSolution, char *currentBoard){
       }
       i++;
    }
-   printf("%s%d", "size of the solution: ", solutionSize);
-   printf("%s%d", "counter value: ", counter);
    return (solutionSize == counter) ? solutionSize : 0;
 }
